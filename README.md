@@ -61,8 +61,8 @@ apiracer/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/apiracer.git
-cd apiracer
+git clone https://github.com/Ali-ahsan35/API_Racer
+cd API_Racer
 ```
 
 ### 2. Install dependencies
