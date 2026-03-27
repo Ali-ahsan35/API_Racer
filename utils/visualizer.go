@@ -16,23 +16,19 @@ func ShowResults(
 	wgMs := wgDuration.Milliseconds()
 	chMs := chDuration.Milliseconds()
 
-	// Header
 	fmt.Println("\n================= API PERFORMANCE TEST =================")
 	fmt.Printf("\nTotal APIs Called: %d\n", totalAPIs)
 
-	// Sequential
 	fmt.Println("\n[1] Sequential Execution:")
 	fmt.Println("-----------------------------------")
 	fmt.Printf("Time Taken : %d ms\n", seqMs)
 	fmt.Printf("Success    : %d/%d\n", seqSuccess, totalAPIs)
 
-	// WaitGroup
 	fmt.Println("\n[2] Concurrent (WaitGroup):")
 	fmt.Println("-----------------------------------")
 	fmt.Printf("Time Taken : %d ms\n", wgMs)
 	fmt.Printf("Success    : %d/%d\n", wgSuccess, totalAPIs)
 
-	// Channels
 	fmt.Println("\n[3] Concurrent (Channels):")
 	fmt.Println("-----------------------------------")
 	fmt.Printf("Time Taken : %d ms\n", chMs)
@@ -42,7 +38,6 @@ func ShowResults(
 
 	wgVsSeq := float64(seqMs-wgMs) / float64(seqMs) * 100
 	chVsSeq := float64(seqMs-chMs) / float64(seqMs) * 100
-	wgVsCh := float64(chMs-wgMs) / float64(chMs) * 100
 
 	fmt.Println("\nPerformance Gain:")
 
@@ -59,9 +54,11 @@ func ShowResults(
 	}
 
 	if wgMs < chMs {
-		fmt.Printf("- WaitGroup vs Channels    : ~%.0f%% faster than Channels\n", -wgVsCh)
+		diff := float64(chMs-wgMs) / float64(chMs) * 100
+		fmt.Printf("- WaitGroup vs Channels    : ~%.0f%% faster than Channels\n", diff)
 	} else {
-		fmt.Printf("- WaitGroup vs Channels    : ~%.0f%% slower than Channels\n", wgVsCh)
+		diff := float64(wgMs-chMs) / float64(chMs) * 100
+		fmt.Printf("- WaitGroup vs Channels    : ~%.0f%% slower than Channels\n", diff)
 	}
 
 }

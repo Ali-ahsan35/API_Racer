@@ -13,11 +13,9 @@ func FetchAPI(url string) (string, error) {
 		return "", err
 	}
 
-	// Add headers
 	req.Header.Set("X-Requested-With", "XMLHttpRequest")
 	req.Header.Set("Content-Type", "application/json")
 
-	// Send request
 	client := &http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -28,7 +26,6 @@ func FetchAPI(url string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// Read raw response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
