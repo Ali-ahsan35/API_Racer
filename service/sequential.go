@@ -24,20 +24,18 @@ var apiURLs = []string{
 func RunSequential() (time.Duration, int) {
 
 	start := time.Now()
-
 	successCount := 0
 
 	for i, url := range apiURLs {
-		_, err := request.FetchAPI(url)
+		resp, err := request.FetchAPI(url)
 		if err != nil {
 			fmt.Printf("  [API %d] Failed: %v\n", i+1, err)
 		} else {
 			successCount++
-			fmt.Printf("  [API %d] Success\n", i+1)
+			fmt.Printf("  [API %d] Success | Location: %v\n", i+1, resp.GeoInfo["Name"])
 		}
 	}
 
 	duration := time.Since(start)
-
 	return duration, successCount
 }
