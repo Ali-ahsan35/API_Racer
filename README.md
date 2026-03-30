@@ -1,4 +1,4 @@
-# apiracer
+# API_Racer
 
 A Beego-based Go project that demonstrates and benchmarks **concurrent vs sequential API calling** using goroutines, channels, and WaitGroup. Built as a learning exercise to deeply understand Go concurrency patterns.
 
@@ -33,9 +33,9 @@ apiracer/
 ├── routers/
 │   └── router.go                  # Route definitions
 ├── service/
-│   ├── sequential.go              # Phase 1: Sequential execution
-│   ├── waitgroup.go               # Phase 2: Concurrent with WaitGroup
-│   └── channel.go                 # Phase 3: Concurrent with Channels
+│   ├── sequential.go                 Sequential execution
+│   ├── waitgroup.go                 Concurrent with WaitGroup
+│   └── channel.go                   Concurrent with Channels
 ├── utils/
 │   └── visualizer.go              # Terminal output and comparison
 ├── static/                        # Static files
