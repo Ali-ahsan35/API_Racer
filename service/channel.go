@@ -2,15 +2,17 @@ package service
 
 import (
 	"apiracer/request"
+	"apiracer/utils"
 	"fmt"
 	"sync"
 	"time"
 )
 
-func RunChannel() (time.Duration, int) {
+func RunChannel() (time.Duration, int, utils.ProfilingData) {
 
 	ch := make(chan bool, len(apiURLs))
 	var wg sync.WaitGroup
+	memBefore := utils.CaptureMemStats()
 	start := time.Now()
 
 	for i, url := range apiURLs {
@@ -34,12 +36,22 @@ func RunChannel() (time.Duration, int) {
 	}()
 
 	successCount := 0
+	goroutines := utils.CaptureGoroutines()
 	for result := range ch {
 		if result {
 			successCount++
 		}
 	}
+	memAfter := utils.CaptureMemStats()
 
 	duration := time.Since(start)
-	return duration, successCount
+
+	profilingData := utils.ProfilingData{
+		MemBefore:  memBefore,
+		MemAfter:   memAfter,
+		Goroutines: goroutines,
+		TimeTaken:  duration,
+	}
+
+	return duration, successCount,profilingData
 }

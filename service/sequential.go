@@ -2,6 +2,7 @@ package service
 
 import (
 	"apiracer/request"
+	"apiracer/utils"
 	"fmt"
 	"time"
 )
@@ -21,10 +22,12 @@ var apiURLs = []string{
 	"https://ownerdirect.beta.123presto.com/api/v1/category/details/usa:texas?amenities=11&device=desktop&items=1&limit=8&locations=US&showFallbackData=1",
 }
 
-func RunSequential() (time.Duration, int) {
+func RunSequential() (time.Duration, int,utils.ProfilingData) {
 
 	start := time.Now()
 	successCount := 0
+	memBefore := utils.CaptureMemStats()
+	goroutines := utils.CaptureGoroutines()
 
 	for i, url := range apiURLs {
 		resp, err := request.FetchAPI(url)
@@ -35,7 +38,16 @@ func RunSequential() (time.Duration, int) {
 			fmt.Printf("  [API %d] Success | Location: %v\n", i+1, resp.GeoInfo["Name"])
 		}
 	}
+	memAfter := utils.CaptureMemStats()
 
 	duration := time.Since(start)
-	return duration, successCount
+	
+	profilingData := utils.ProfilingData{
+		MemBefore:  memBefore,
+		MemAfter:   memAfter,
+		Goroutines: goroutines,
+		TimeTaken:  duration,
+	}
+
+	return duration, successCount, profilingData
 }

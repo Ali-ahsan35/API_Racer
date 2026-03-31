@@ -2,16 +2,20 @@ package service
 
 import (
 	"apiracer/request"
+	"apiracer/utils"
 	"fmt"
 	"sync"
 	"time"
 )
 
-func RunWaitGroup() (time.Duration, int) {
+func RunWaitGroup() (time.Duration, int, utils.ProfilingData) {
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	successCount := 0
+
+	memBefore := utils.CaptureMemStats()
+
 
 	start := time.Now()
 
@@ -33,10 +37,19 @@ func RunWaitGroup() (time.Duration, int) {
 			mu.Unlock()
 
 		}(url, i)
+		
 	}
-
+	goroutines := utils.CaptureGoroutines()
 	wg.Wait()
+	memAfter := utils.CaptureMemStats()
 
 	duration := time.Since(start)
-	return duration, successCount
+
+	profilingData := utils.ProfilingData{
+		MemBefore:  memBefore,
+		MemAfter:   memAfter,
+		Goroutines: goroutines,
+		TimeTaken:  duration,
+	}
+	return duration, successCount, profilingData
 }
