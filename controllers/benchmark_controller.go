@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime/pprof"
 	"time"
+	 "apiracer/request" 
 
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -43,17 +44,17 @@ func (c *BenchmarkController) RunBenchmark() {
 	// ============ Phase 1: Sequential ============
 	fmt.Println("\n[1] Running Sequential Execution...")
 	fmt.Println("-----------------------------------")
-	seqDuration, seqSuccess, seqData := service.RunSequential()
+	seqDuration, seqSuccess, seqData := service.RunSequential(&request.RealClient{})
 
 	// ============ Phase 2: WaitGroup ============
 	fmt.Println("\n[2] Running Concurrent (WaitGroup)...")
 	fmt.Println("-----------------------------------")
-	wgDuration, wgSuccess, wgData := service.RunWaitGroup()
+	wgDuration, wgSuccess, wgData := service.RunWaitGroup(&request.RealClient{})
 
 	// ============ Phase 3: Channels ============
 	fmt.Println("\n[3] Running Concurrent (Channels)...")
 	fmt.Println("-----------------------------------")
-	chDuration, chSuccess, chData := service.RunChannel()
+	chDuration, chSuccess, chData := service.RunChannel(&request.RealClient{})
 
 	// Capture memory AFTER everything finishes
 	memAfter := utils.CaptureMemStats()

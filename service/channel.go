@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func RunChannel() (time.Duration, int, utils.ProfilingData) {
+func RunChannel(client request.APIClient) (time.Duration, int, utils.ProfilingData) {
 
 	ch := make(chan bool, len(apiURLs))
 	var wg sync.WaitGroup
@@ -19,7 +19,7 @@ func RunChannel() (time.Duration, int, utils.ProfilingData) {
 		wg.Add(1)
 		go func(url string, i int) {
 			defer wg.Done()
-			resp, err := request.FetchAPI(url)
+			resp, err := client.Fetch(url)
 			if err != nil {
 				fmt.Printf("  [API %d] Failed: %v\n", i+1, err)
 				ch <- false
@@ -43,7 +43,6 @@ func RunChannel() (time.Duration, int, utils.ProfilingData) {
 		}
 	}
 	memAfter := utils.CaptureMemStats()
-
 	duration := time.Since(start)
 
 	profilingData := utils.ProfilingData{
@@ -53,5 +52,5 @@ func RunChannel() (time.Duration, int, utils.ProfilingData) {
 		TimeTaken:  duration,
 	}
 
-	return duration, successCount,profilingData
+	return duration, successCount, profilingData
 }

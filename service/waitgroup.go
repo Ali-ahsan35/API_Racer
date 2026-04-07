@@ -8,15 +8,13 @@ import (
 	"time"
 )
 
-func RunWaitGroup() (time.Duration, int, utils.ProfilingData) {
+func RunWaitGroup(client request.APIClient) (time.Duration, int, utils.ProfilingData) {
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	successCount := 0
 
 	memBefore := utils.CaptureMemStats()
-
-
 	start := time.Now()
 
 	for i, url := range apiURLs {
@@ -24,9 +22,8 @@ func RunWaitGroup() (time.Duration, int, utils.ProfilingData) {
 		go func(url string, i int) {
 			defer wg.Done()
 
-			resp, err := request.FetchAPI(url)
+			resp, err := client.Fetch(url)
 
-			// Everything inside mutex to avoid race condition
 			mu.Lock()
 			if err != nil {
 				fmt.Printf("  [API %d] Failed: %v\n", i+1, err)
@@ -37,12 +34,11 @@ func RunWaitGroup() (time.Duration, int, utils.ProfilingData) {
 			mu.Unlock()
 
 		}(url, i)
-		
 	}
+
 	goroutines := utils.CaptureGoroutines()
 	wg.Wait()
 	memAfter := utils.CaptureMemStats()
-
 	duration := time.Since(start)
 
 	profilingData := utils.ProfilingData{

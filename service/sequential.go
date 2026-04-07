@@ -22,7 +22,7 @@ var apiURLs = []string{
 	"https://ownerdirect.beta.123presto.com/api/v1/category/details/usa:texas?amenities=11&device=desktop&items=1&limit=8&locations=US&showFallbackData=1",
 }
 
-func RunSequential() (time.Duration, int,utils.ProfilingData) {
+func RunSequential(client request.APIClient) (time.Duration, int, utils.ProfilingData) {
 
 	start := time.Now()
 	successCount := 0
@@ -30,7 +30,7 @@ func RunSequential() (time.Duration, int,utils.ProfilingData) {
 	goroutines := utils.CaptureGoroutines()
 
 	for i, url := range apiURLs {
-		resp, err := request.FetchAPI(url)
+		resp, err := client.Fetch(url)
 		if err != nil {
 			fmt.Printf("  [API %d] Failed: %v\n", i+1, err)
 		} else {
@@ -38,10 +38,10 @@ func RunSequential() (time.Duration, int,utils.ProfilingData) {
 			fmt.Printf("  [API %d] Success | Location: %v\n", i+1, resp.GeoInfo["Name"])
 		}
 	}
-	memAfter := utils.CaptureMemStats()
 
+	memAfter := utils.CaptureMemStats()
 	duration := time.Since(start)
-	
+
 	profilingData := utils.ProfilingData{
 		MemBefore:  memBefore,
 		MemAfter:   memAfter,

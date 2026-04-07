@@ -6,11 +6,10 @@ import (
 	"io"
 	"net/http"
 	"time"
-
+	
 	beego "github.com/beego/beego/v2/server/web"
 )
 
-// APIResponse holds the structured response from each API call
 type APIResponse struct {
 	GeoInfo map[string]interface{}
 	Result  map[string]interface{}
@@ -70,9 +69,21 @@ func FetchAPI(url string) (*APIResponse, error) {
 		return nil, fmt.Errorf("missing Result field in response")
 	}
 
+	geoMap, ok := geoInfo.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("GeoInfo field is not an object")
+	}
+
+	resultMap, ok := result.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("result field is not an object")
+	}
+
+	
+
 	apiResponse := &APIResponse{
-		GeoInfo: geoInfo.(map[string]interface{}),
-		Result:  result.(map[string]interface{}),
+		GeoInfo: geoMap,
+		Result:  resultMap,
 		Success: true,
 		Error:   "",
 		URL:     url,
